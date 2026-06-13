@@ -33,3 +33,15 @@ Learned:
 - Components remain fully customizable
 - Uses Tailwind under the hood
 
+## Task 1.4 Setup Neon Postgres
+## Task 1.5
+
+Completed:
+- Installed Drizzle ORM
+- Connected Drizzle to Neon Postgres
+
+Learned:
+- Drizzle acts as a type-safe ORM
+- Drizzle Kit handles migrations
+- Database access is centralized in src/db
+
