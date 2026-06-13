@@ -45,3 +45,13 @@ Learned:
 - Drizzle Kit handles migrations
 - Database access is centralized in src/db
 
+## Task 1.6
+
+Completed:
+- Created tasks table schema
+
+Learned:
+- Drizzle schemas define database structure in TypeScript
+- Tables become the source of truth for migrations
+- Task design impacts future AI agent capabilities
+
