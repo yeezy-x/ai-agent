@@ -32,3 +32,4 @@ Learned:
 - Shadcn generates components into the project
 - Components remain fully customizable
 - Uses Tailwind under the hood
+
