@@ -79,3 +79,6 @@ Learned:
 - Next.js Route Handlers
 - REST API design
 - Drizzle CRUD operations
+
+## Task 1.9 Build Todo UI
+
