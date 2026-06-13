@@ -101,3 +101,12 @@ Learned:
 - Database Migrations
 - CRUD Architecture
 - Frontend ↔ Backend Integration
+
+## Task 2.1
+
+Completed:
+- Created task service
+
+Learned:
+- Service layer contains business logic
+- Database access should not live directly in API routes
