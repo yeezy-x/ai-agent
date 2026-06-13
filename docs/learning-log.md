@@ -55,3 +55,14 @@ Learned:
 - Tables become the source of truth for migrations
 - Task design impacts future AI agent capabilities
 
+## Task 1.7
+
+Completed:
+- Generated Drizzle migration
+- Applied migration to Neon Postgres
+- Verified tasks table exists
+
+Learned:
+- Schema changes become SQL migrations
+- Migrations keep database in sync with code
+- Drizzle Studio can inspect tables visually
