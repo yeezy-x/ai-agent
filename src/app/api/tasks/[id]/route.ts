@@ -7,9 +7,9 @@ import { eq } from "drizzle-orm";
 // PATCH /api/tasks/:id - update a task
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params:Promise< { id: string } >}
 ) {
-  const id = Number(params.id);
+  const {id} = await params;
   const body = await req.json();
 
   const updateData: Record<string, unknown> = { updatedAt: new Date() };
@@ -24,7 +24,7 @@ export async function PATCH(
   const [updated] = await db
     .update(tasks)
     .set(updateData)
-    .where(eq(tasks.id, id))
+    .where(eq(tasks.id, Number(id)))
     .returning();
 
   if (!updated) {
@@ -37,11 +37,11 @@ export async function PATCH(
 // DELETE /api/tasks/:id - delete a task
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>}
 ) {
-  const id = Number(params.id);
+  const {id} = await params;
 
-  const [deleted] = await db.delete(tasks).where(eq(tasks.id, id)).returning();
+  const [deleted] = await db.delete(tasks).where(eq(tasks.id, Number(id))).returning();
 
   if (!deleted) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
