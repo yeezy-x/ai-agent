@@ -54,3 +54,7 @@ export async function deleteTask(id: number) {
   const [deleted] = await db.delete(tasks).where(eq(tasks.id, id)).returning();
   return deleted ?? null;
 }
+
+export async function completeTask(id: number) {
+  return updateTask(id, { status: "completed" });
+}
