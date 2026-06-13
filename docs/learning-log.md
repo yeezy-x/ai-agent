@@ -22,3 +22,13 @@ Completed:
 Learned:
 - Tailwind is already configured by create-next-app
 - Utility classes are working correctly
+
+## Task 1.3
+
+Completed:
+- Installed Shadcn UI
+
+Learned:
+- Shadcn generates components into the project
+- Components remain fully customizable
+- Uses Tailwind under the hood
