@@ -66,3 +66,16 @@ Learned:
 - Schema changes become SQL migrations
 - Migrations keep database in sync with code
 - Drizzle Studio can inspect tables visually
+
+## Task 1.8
+
+Completed:
+- Built GET endpoint
+- Built POST endpoint
+- Built PATCH endpoint
+- Built DELETE endpoint
+
+Learned:
+- Next.js Route Handlers
+- REST API design
+- Drizzle CRUD operations
