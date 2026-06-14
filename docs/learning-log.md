@@ -292,3 +292,126 @@ Frontend Response
 ### Key Takeaway
 
 The application can now understand natural language and convert it into structured task information, forming the foundation for future AI-powered task creation.
+
+#### Task 3.5 - Smart Add UI
+
+### Completed
+
+* Added Smart Add input field.
+* Connected UI to the extraction API.
+* Displayed extracted task data to the user.
+* Added loading and error states.
+
+### Learned
+
+* AI features should be exposed through intuitive user interfaces.
+* Frontend applications can leverage AI without exposing API keys.
+* User review before task creation improves reliability.
+* AI-assisted workflows often involve a preview and confirmation step.
+
+### User Flow
+
+Natural Language Input
+
+↓
+
+Smart Add UI
+
+↓
+
+Extraction API
+
+↓
+
+Gemini
+
+↓
+
+Structured Task Preview
+
+↓
+
+User Confirmation
+
+### Example
+
+Input:
+
+Learn Drizzle tomorrow, high priority
+
+Preview:
+
+Title: Learn Drizzle
+
+Priority: High
+
+Due Date: Tomorrow
+
+### Key Takeaway
+
+AI should assist users by reducing manual input while still allowing user control.
+
+#### Task 3.6 - End-to-End Test
+
+### Completed
+
+* Tested natural language task extraction.
+* Verified Gemini integration.
+* Verified extraction API functionality.
+* Verified Smart Add UI workflow.
+* Verified structured task generation.
+
+### Test Cases
+
+Input:
+Learn Drizzle tomorrow
+
+Result:
+Correct title and due date extracted.
+
+Input:
+Finish AI Todo Agent by Friday
+
+Result:
+Correct title and due date extracted.
+
+Input:
+Study Postgres this weekend
+
+Result:
+Correct task structure generated.
+
+### Learned
+
+* End-to-end testing validates the entire workflow rather than individual components.
+* AI responses should be tested with multiple prompt variations.
+* Structured extraction provides predictable application behavior.
+* Logging AI responses is useful during development.
+
+### Architecture
+
+User
+
+↓
+
+Frontend
+
+↓
+
+AI API Route
+
+↓
+
+Gemini
+
+↓
+
+Structured JSON
+
+↓
+
+Task Preview
+
+### Key Takeaway
+
+The application can now understand natural language and convert it into structured task data, creating the first genuinely AI-powered feature of the project.

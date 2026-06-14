@@ -37,7 +37,7 @@ export async function extractTask(input: string): Promise<ExtractedTask> {
         - Resolve relative dates like "tomorrow", "next Monday", etc.
         - Return ONLY JSON and nothing else
         `,
-        responseMimeType:'application/json'
+        responseMimeType:'application/json',
       },
       contents: input,
     });
