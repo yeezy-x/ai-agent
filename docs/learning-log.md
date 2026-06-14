@@ -111,3 +111,92 @@ Learned:
 - Service layer contains business logic
 - Database access should not live directly in API routes
 
+## Task 2.2 - Add Update and Delete Methods
+Completed
+Added updateTask()
+Added deleteTask()
+Learned
+CRUD operations can be grouped into a single service.
+Reusable service functions reduce code duplication.
+Future consumers (API routes, AI agents, background jobs) can share the same logic.
+
+## Task 2.3 - Add Complete Task Helper
+Completed
+Added completeTask()
+Learned
+Business-specific operations deserve dedicated functions.
+completeTask() is more expressive than calling updateTask() with a status object everywhere.
+Services can expose domain-specific actions.
+
+## Task 2.4 - Refactor API Routes
+Completed
+Refactored GET routes to use service functions.
+Refactored POST routes to use service functions.
+Refactored PATCH routes to use service functions.
+Refactored DELETE routes to use service functions.
+Learned
+Route handlers should be thin wrappers around business logic.
+API routes are responsible for HTTP concerns.
+Services are responsible for application logic.
+Architecture Change
+
+Before:
+
+API Route
+→ Database
+
+After:
+
+API Route
+→ Service Layer
+→ Database
+
+## Task 2.5 - Frontend Discussion
+Learned
+Frontend components should generally call API routes, not database services directly.
+Service functions are server-side concerns.
+Keeping the API boundary makes the application easier to scale and secure.
+
+Recommended Flow:
+
+Frontend
+→ API Route
+→ Service Layer
+→ Database
+
+## Task 2.6 - End-to-End Testing
+Tested
+Create Task
+Fetch Tasks
+Update Task
+Complete Task
+Delete Task
+Result
+
+All functionality works correctly after introducing the service layer.
+
+Key Takeaways
+Separation of Concerns
+Reusable Business Logic
+Cleaner API Routes
+Better Scalability
+Architecture Ready for AI Agent Integration
+Why This Matters for Phase 3+
+
+The AI agent will eventually call:
+
+createTask()
+getTasks()
+updateTask()
+completeTask()
+
+Instead of talking directly to the database.
+
+Architecture:
+
+AI Agent
+→ Tool
+→ Service Layer
+→ Database
+
+This makes the service layer the foundation for future tool-calling agents.
