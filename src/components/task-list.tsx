@@ -1,10 +1,8 @@
-import { db } from "@/db";
-import { tasks } from "@/db/schema";
-import { desc } from "drizzle-orm";
 import { TaskItem } from "@/components/task-item";
+import { getTasks } from "@/server/services/task.service";
 
 export async function TaskList() {
-  const allTasks = await db.select().from(tasks).orderBy(desc(tasks.createdAt));
+  const allTasks = await getTasks()
 
   if (allTasks.length === 0) {
     return <p className="text-muted-foreground">No tasks yet. Add one above.</p>;
