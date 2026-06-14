@@ -229,3 +229,66 @@ Completed:
 Learned:
 - Prompt engineering for structured output
 - JSON extraction workflows
+
+### Task 3.4 - Create Extraction API Route
+
+### Completed
+
+* Created `POST /api/ai/extract-task`.
+* Connected the API route to the `extractTask()` function.
+* Returned structured task data as JSON.
+* Added error handling for invalid AI responses.
+
+### Learned
+
+* API routes act as the bridge between the frontend and AI services.
+* AI logic should be isolated from UI components.
+* Keeping extraction logic in a separate module improves maintainability and testing.
+* Server-side AI processing protects API keys and sensitive configuration.
+
+### Request Flow
+
+User Input
+
+↓
+
+Frontend
+
+↓
+
+POST /api/ai/extract-task
+
+↓
+
+Gemini
+
+↓
+
+Structured JSON
+
+↓
+
+Frontend Response
+
+### Example Request
+
+```json
+{
+  "text": "Finish AI Todo Agent by Friday"
+}
+```
+
+### Example Response
+
+```json
+{
+  "title": "Finish AI Todo Agent",
+  "description": null,
+  "priority": "medium",
+  "dueDate": "2026-06-19"
+}
+```
+
+### Key Takeaway
+
+The application can now understand natural language and convert it into structured task information, forming the foundation for future AI-powered task creation.

@@ -1,5 +1,5 @@
 // src/server/ai/extractTask.ts
-import { openai } from "@/lib/openai";
+import { ai } from "@/lib/geminiai";
 
 export interface ExtractedTask {
   title: string;
@@ -11,37 +11,44 @@ export interface ExtractedTask {
 export async function extractTask(input: string): Promise<ExtractedTask> {
   const today = new Date().toISOString().split("T")[0]; // e.g. "2026-06-14"
 
-  const response = await openai.chat.completions.create({
-    model: "openai/gpt-4o",
-    response_format: { type: "json_object" },
-    messages: [
-      {
-        role: "system",
-        content: `You extract structured task data from natural language.
-Today's date is ${today}.
+  const response =
+    await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      config: {
+        systemInstruction: `
+        You are a task extraction system.
 
-Return ONLY a JSON object with these fields:
-- title: string (required, short and clear)
-- description: string or null (extra detail if mentioned, otherwise null)
-- priority: "low" | "medium" | "high" (default "medium" if not specified)
-- dueDate: string or null (ISO date "YYYY-MM-DD" if a date/relative date like "tomorrow" is mentioned, otherwise null)
+        Today's date is ${today}.
 
-Resolve relative dates ("tomorrow", "next Monday") into actual dates based on today's date.`,
+        Return ONLY valid JSON.
+
+        Schema:
+        {
+        "title": string,
+        "description": string | null,
+        "priority": "low" | "medium" | "high",
+        "dueDate": string | null
+        }
+        Rules:
+        - title is required
+        - description is optional
+        - priority defaults to "medium"
+        - dueDate must be in YYYY-MM-DD format or null
+        - Resolve relative dates like "tomorrow", "next Monday", etc.
+        - Return ONLY JSON and nothing else
+        `,
+        responseMimeType:'application/json'
       },
-      {
-        role: "user",
-        content: input,
-      },
-    ],
-  });
+      contents: input,
+    });
 
-  const content = response.choices[0]?.message?.content;
+
+  const content = response.text;
   if (!content) {
-    throw new Error("No response from OpenAI");
+    throw new Error("No response from Gemini");
   }
-
+  //const cleaned = content.replace(/```json/g, "").replace(/```/g, "").trim();
   const parsed = JSON.parse(content);
-
   return {
     title: parsed.title,
     description: parsed.description ?? null,
