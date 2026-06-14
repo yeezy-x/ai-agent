@@ -415,3 +415,13 @@ Task Preview
 ### Key Takeaway
 
 The application can now understand natural language and convert it into structured task data, creating the first genuinely AI-powered feature of the project.
+
+## Task 4.1
+
+Completed:
+- Created Tool interface
+
+Learned:
+- Tools need metadata for LLMs
+- Tools need executable logic
+- Tool definitions should be standardized
