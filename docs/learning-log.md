@@ -200,3 +200,32 @@ AI Agent
 → Database
 
 This makes the service layer the foundation for future tool-calling agents.
+
+## Task 3.1
+
+Completed:
+- Created OpenAI API key
+- Added environment variables
+
+Learned:
+- Secrets should never be committed
+- Environment variables provide runtime configuration
+
+## Task 3.2
+
+Completed:
+- Installed OpenAI SDK
+- Created shared OpenAI client
+
+Learned:
+- SDK clients should be centralized
+- Shared clients avoid duplicated configuration
+
+## Task 3.3
+
+Completed:
+- Built task extraction prompt
+
+Learned:
+- Prompt engineering for structured output
+- JSON extraction workflows
