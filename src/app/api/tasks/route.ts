@@ -1,12 +1,10 @@
-import {db} from "@/db"
-import {tasks} from "@/db/schema"
-import {desc} from "drizzle-orm"
+import { createTask, getTasks } from "@/server/services/task.service"
 import { NextRequest, NextResponse } from "next/server"
 
 //get /api/tasks - list all tasks
 export async function GET(){
     try{
-        const allTasks=await db.select().from(tasks).orderBy(desc(tasks.createdAt))
+        const allTasks=await getTasks();
         return NextResponse.json(allTasks)
     }catch(error){
         console.log(error);
@@ -24,16 +22,13 @@ export async function POST(req:NextRequest){
         if(!body.title || typeof body.title!=='string'){
             return NextResponse.json({error: "Title is required."})
         }
-        const [newTask] = await db
-        .insert(tasks)
-        .values({
-        title: body.title,
-        description: body.description ?? null,
-        priority: body.priority ?? "medium",
-        dueDate: body.dueDate ? new Date(body.dueDate) : null,
+        const newTask = await createTask({
+            title: body.title,
+            description: body.description,
+            priority: body.priority,
+            dueDate: body.dueDate,
         })
-        .returning();
-    return NextResponse.json(newTask, { status: 201 });
+        return NextResponse.json(newTask, { status: 201 });
     }catch(error){
         console.log(error);
         return NextResponse.json(

@@ -110,3 +110,4 @@ Completed:
 Learned:
 - Service layer contains business logic
 - Database access should not live directly in API routes
+

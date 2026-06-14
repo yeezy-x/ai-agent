@@ -1,8 +1,6 @@
 // src/app/api/tasks/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
-import { tasks } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { deleteTask, updateTask } from "@/server/services/task.service";
 
 // PATCH /api/tasks/:id - update a task
 export async function PATCH(
@@ -21,11 +19,13 @@ export async function PATCH(
     updateData.dueDate = body.dueDate ? new Date(body.dueDate) : null;
   }
 
-  const [updated] = await db
-    .update(tasks)
-    .set(updateData)
-    .where(eq(tasks.id, Number(id)))
-    .returning();
+  const updated = await updateTask(Number(id),{
+    title: body.title,
+    description: body.description,
+    status: body.status,
+    priority: body.priority,
+    dueDate: body.dueDate,
+  })
 
   if (!updated) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
@@ -41,7 +41,7 @@ export async function DELETE(
 ) {
   const {id} = await params;
 
-  const [deleted] = await db.delete(tasks).where(eq(tasks.id, Number(id))).returning();
+  const deleted = await deleteTask(Number(id))
 
   if (!deleted) {
     return NextResponse.json({ error: "Task not found" }, { status: 404 });
