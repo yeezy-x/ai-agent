@@ -425,3 +425,284 @@ Learned:
 - Tools need metadata for LLMs
 - Tools need executable logic
 - Tool definitions should be standardized
+# Phase 4 - Agent Tools
+
+## Goal
+
+Transform application functionality into reusable AI tools that can later be invoked by an LLM.
+
+Architecture:
+
+Service Layer
+↓
+Agent Tools
+↓
+Tool Registry
+
+Future:
+
+LLM
+↓
+Tool Selection
+↓
+Tool Execution
+↓
+Result
+
+---
+
+## Task 4.1 - Create Tool Interface
+
+### Completed
+
+* Created a shared Tool interface.
+* Standardized tool structure across the application.
+* Added metadata fields required by LLMs.
+
+### Learned
+
+* Every tool consists of:
+
+  * Name
+  * Description
+  * Parameter Schema
+  * Execute Function
+* Tool metadata helps an LLM understand when and how to use a tool.
+* Strong typing improves tool safety and maintainability.
+
+### Key Takeaway
+
+A tool is simply a function wrapped with metadata that an LLM can understand.
+
+---
+
+## Task 4.2 - Create Task Tool
+
+### Completed
+
+* Created createTask tool.
+* Connected tool execution to the service layer.
+
+### Learned
+
+* Tools should delegate work to services.
+* Business logic should not be duplicated inside tools.
+* Tools act as adapters between AI and application logic.
+
+### Flow
+
+Tool
+↓
+Service
+↓
+Database
+
+---
+
+## Task 4.3 - Get Tasks Tool
+
+### Completed
+
+* Created getTasks tool.
+
+### Learned
+
+* Read operations can also be exposed as tools.
+* Tools are not limited to database mutations.
+
+### Example
+
+User:
+What tasks do I have?
+
+Future Agent:
+
+getTasks()
+↓
+Returns task list
+
+---
+
+## Task 4.4 - Update and Complete Task Tools
+
+### Completed
+
+* Created updateTask tool.
+* Created completeTask tool.
+
+### Learned
+
+* Domain-specific actions are often better than generic updates.
+* completeTask() provides clearer intent than updateTask(status="completed").
+
+### Example
+
+Instead of:
+
+updateTask({
+status: "completed"
+})
+
+Use:
+
+completeTask()
+
+---
+
+## Task 4.5 - Delete Task Tool
+
+### Completed
+
+* Created deleteTask tool.
+
+### Learned
+
+* CRUD operations map naturally to tool abstractions.
+* Consistent tool design simplifies future agent development.
+
+---
+
+## Task 4.6 - Tool Registry
+
+### Completed
+
+* Created centralized tool registry.
+
+### Learned
+
+* A registry provides a single source of truth for available tools.
+* Tools can be discovered dynamically.
+* Agents should not manually import every tool.
+
+### Architecture
+
+Agent
+↓
+Tool Registry
+↓
+Tool
+↓
+Service
+
+---
+
+## Task 4.7 - Direct Tool Testing
+
+### Completed
+
+* Tested tools without involving an LLM.
+* Verified tool execution and service integration.
+
+### Learned
+
+* Tools should be tested independently.
+* Separating tool logic from LLM logic makes debugging easier.
+* Most agent bugs are actually tool bugs.
+
+### Example
+
+createTaskTool.execute({
+title: "Learn AI Agents"
+})
+
+↓
+
+Task Created
+
+---
+
+## Key Concepts Learned
+
+### Tool Metadata
+
+Tools require metadata so that an LLM can understand:
+
+* What the tool does
+* When it should be used
+* What arguments it expects
+
+### JSON Schema
+
+Tools describe inputs using JSON Schema.
+
+Example:
+
+{
+"title": {
+"type": "string"
+}
+}
+
+### Separation of Concerns
+
+UI
+↓
+API
+↓
+Service
+↓
+Database
+
+Agent
+↓
+Tool
+↓
+Service
+↓
+Database
+
+Both systems reuse the same business logic.
+
+### Tool Registry Pattern
+
+Instead of:
+
+if (toolName === "createTask")
+
+Use:
+
+registry.find(tool => tool.name === toolName)
+
+This scales much better as more tools are added.
+
+---
+
+## Why Phase 4 Matters
+
+This phase created the bridge between traditional software and AI agents.
+
+Before:
+
+User
+↓
+API
+↓
+Service
+
+After:
+
+Agent
+↓
+Tool
+↓
+Service
+
+The application is now prepared for tool-calling agents.
+
+---
+
+## Ready for Phase 5
+
+Phase 5 will introduce:
+
+LLM
+↓
+Tool Selection
+↓
+Tool Execution
+↓
+Tool Result
+↓
+Final Response
+
+This is the first true AI Agent phase of the project.

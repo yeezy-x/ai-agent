@@ -1,12 +1,11 @@
-import { Type } from "@google/genai"
-
-export interface Tool{
+export interface Tool<TArgs=unknown, TResult=unknown>{
     name:string,
     description:string,
     parameters:{
-        type:Type.OBJECT,
+        type:"object",
         properties:Record<string,unknown>,
         required?:string[];
     }
-    execute(args:Record<string,unknown>): Promise<unknown>
-} 
+    execute(args:TArgs): Promise<TResult>
+}
+
