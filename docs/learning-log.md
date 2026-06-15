@@ -706,3 +706,194 @@ Tool Result
 Final Response
 
 This is the first true AI Agent phase of the project.
+
+Phase 5 Learning Log — Tool Calling Agent
+Goal
+
+Build a single-step AI agent that can:
+
+User Message
+      ↓
+LLM decides tool
+      ↓
+Execute tool
+      ↓
+Return result
+
+Instead of hardcoding actions, the LLM chooses which tool to use.
+
+Task 5.1 — Convert Tools to LLM Function Definitions
+
+What I learned
+
+LLMs cannot execute code directly.
+They need tool metadata:
+name
+description
+JSON schema
+Converted internal Tool[] into Gemini/OpenAI-compatible function definitions.
+
+Example:
+
+{
+  name: "createTask",
+  description: "...",
+  parameters: {...}
+}
+
+This teaches the model what capabilities it has.
+
+Task 5.2 — Build executeTool.ts
+
+What I learned
+
+Created a central executor:
+
+executeTool(name, args)
+
+Responsibilities:
+
+Find tool by name
+Execute safely
+Handle errors
+Return standardized results
+
+Benefits:
+
+Agent doesn't need to know tool implementations.
+New tools can be added easily.
+Task 5.3 — Build agent.ts
+
+What I learned
+
+Implemented the core agent workflow:
+
+User Input
+↓
+Gemini
+↓
+Tool Call?
+↓
+Execute Tool
+↓
+Return Result
+
+Key concepts learned:
+
+Function calling
+Tool selection by LLM
+Tool execution
+Agent orchestration
+
+This is the first real AI Agent in the project.
+
+Task 5.4 — Build API Route
+
+Created:
+
+/api/agent/chat
+
+Responsibilities:
+
+Frontend
+↓
+API Route
+↓
+Agent
+↓
+Tool
+↓
+Response
+
+Learned:
+
+API routes should be thin.
+Business logic belongs in the agent layer.
+Task 5.5 — Build Chat UI
+
+Built:
+
+User
+↓
+Chat Interface
+↓
+Agent API
+↓
+Response
+
+Features:
+
+Chat history
+Loading states
+Error handling
+Tool call indicator
+
+Example:
+
+🔧 called getTasks
+
+This provides visibility into agent behavior.
+
+Task 5.6 — End-to-End Testing
+
+Tested:
+
+Add buy groceries
+What tasks do I have?
+Delete task 3
+Complete task 5
+
+Verified:
+
+✅ Gemini selects correct tool
+
+✅ Tool arguments are parsed correctly
+
+✅ Tool executes successfully
+
+✅ Database updates correctly
+
+✅ Response returns to UI
+
+Key Concepts Learned in Phase 5
+Function Calling
+LLM
+↓
+Tool Name + Arguments
+
+instead of:
+
+LLM
+↓
+Text Only
+Agent Architecture
+Frontend
+↓
+API Route
+↓
+Agent
+↓
+Tool Executor
+↓
+Tools
+↓
+Services
+↓
+Database
+Separation of Concerns
+Agent      → reasoning
+Tools      → capabilities
+Services   → business logic
+Database   → persistence
+UI         → interaction
+Biggest Takeaway
+
+An AI Agent is fundamentally:
+
+Reasoning
++
+Tools
++
+Memory
+
+Phase 5 introduced the Tools piece
