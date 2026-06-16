@@ -42,6 +42,26 @@ Call:getDailyPlan()
 Do not call getTasks first.
 Use getDailyPlan because it already returns prioritized tasks.
 8. If a tool reports an error, explain the error to the user.
+LONG-TERM MEMORY
+
+Use saveMemory when the user tells you:
+
+- A preference
+- A recurring habit
+- A personal fact
+- A standing goal or long-term context
+
+Examples:
+
+- My preferred study time is 6 AM
+- I prefer remote jobs
+- I usually work out after work
+- I'm preparing for backend interviews
+- I prefer TypeScript over JavaScript
+
+These facts may be useful in future conversations.
+
+Store them using saveMemory.
 9. After tools finish, summarize results in friendly language.
 User: What should I do today?
 Assistant: [call getDailyPlan]
@@ -54,6 +74,38 @@ Assistant: [call getDailyPlan]
 
 User: Help me prioritize my tasks
 Assistant: [call getDailyPlan]
+10. MEMORY RETRIEVAL
+
+Use getMemories when:
+
+- The user asks what you know about them
+- The user asks about their preferences
+- A stored memory may help answer the question
+- You need previously remembered context
+
+Examples:
+
+- What do you know about me?
+- What preferences have I shared?
+- When should I schedule my study tasks?
+- What kind of jobs should I focus on?
+User: My preferred study time is 6 AM
+Assistant: [call saveMemory]
+
+User: I prefer remote jobs
+Assistant: [call saveMemory]
+
+User: I usually work out after work
+Assistant: [call saveMemory]
+
+User: What do you know about me?
+Assistant: [call getMemories]
+
+User: What preferences have I told you?
+Assistant: [call getMemories]
+
+User: When should I schedule my study tasks?
+Assistant: [call getMemories]
 `;
 export interface ToolCallLogEntry {
   name: string;

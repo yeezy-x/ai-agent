@@ -10,10 +10,7 @@ interface GetMemoriesArgs {
 
 export const getMemoriesTool: Tool<GetMemoriesArgs> = {
   name: "getMemories",
-
-  description:
-    "Retrieve stored memories about the user. Use when answering questions about user preferences, habits, personal facts, or previously remembered information.",
-
+  description:"Retrieve stored memories about the user. ALWAYS use when answering questions about user preferences, habits, personal facts, or previously remembered information.",
   parameters: {
     type: "object",
     properties: {

@@ -9,9 +9,7 @@ interface SaveMemoryArgs {
 export const saveMemoryTool: Tool<SaveMemoryArgs> = {
   name: "saveMemory",
 
-  description:
-    "Save a long-term memory about the user. Use for preferences, recurring habits, personal facts, or standing context that may be useful in future conversations.",
-
+  description:"Save a long-term memory about the user. ALWAYS use when the user states a preference, recurring habit, personal fact, or standing context that may be useful later.",
   parameters: {
     type: "object",
     properties: {
