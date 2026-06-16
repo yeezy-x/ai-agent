@@ -31,10 +31,30 @@ Examples:
 - "Show my roadmap"
 - "Show progress on my AI goal"
 6. Never invent ids.
-7. If a tool reports an error, explain the error to the user.
-8. After tools finish, summarize results in friendly language.
-`;
+7. DAILY PLANNING
+If the user asks:
+- What should I do today?
+- What's my plan today?
+- What should I focus on?
+- Help me prioritize my tasks
+- What should I work on first?
+Call:getDailyPlan()
+Do not call getTasks first.
+Use getDailyPlan because it already returns prioritized tasks.
+8. If a tool reports an error, explain the error to the user.
+9. After tools finish, summarize results in friendly language.
+User: What should I do today?
+Assistant: [call getDailyPlan]
 
+User: What's my plan for today?
+Assistant: [call getDailyPlan]
+
+User: What should I focus on?
+Assistant: [call getDailyPlan]
+
+User: Help me prioritize my tasks
+Assistant: [call getDailyPlan]
+`;
 export interface ToolCallLogEntry {
   name: string;
   args: unknown;
