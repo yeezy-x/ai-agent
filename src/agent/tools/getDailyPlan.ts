@@ -5,8 +5,7 @@ type GetDailyPlanArgs = Record<string, never>;
 
 export const getDailyPlanTool: Tool<GetDailyPlanArgs> = {
   name: "getDailyPlan",
-  description:
-    "Get a prioritized plan for today's work. ALWAYS use when the user asks what they should do today, what to focus on, or how to prioritize tasks.",
+  description:"Get a prioritized plan for today's work. ALWAYS use when the user asks what they should do today, what to focus on, or how to prioritize tasks.",
   parameters: {
     type: "object",
     properties: {},
@@ -20,5 +19,7 @@ export const getDailyPlanTool: Tool<GetDailyPlanArgs> = {
     };
   },
 };
+
+
 
 
