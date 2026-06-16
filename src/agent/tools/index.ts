@@ -5,6 +5,7 @@ import { updateTaskTool } from "./updateTask";
 import { completeTaskTool } from "./completeTask";
 import { deleteTaskTool } from "./deleteTask";
 import type { Tool } from "./types";
+import { findTaskByTitleTool } from "./findTasksByTitle";
 
 export const tools: Tool[] = [
   createTaskTool,
@@ -12,6 +13,7 @@ export const tools: Tool[] = [
   updateTaskTool,
   completeTaskTool,
   deleteTaskTool,
+  findTaskByTitleTool
 ];
 
 // Lookup map for quick access by name (used when executing a tool call)
