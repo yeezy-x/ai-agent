@@ -8,6 +8,7 @@ import type { Tool } from "./types";
 import { findTaskByTitleTool } from "./findTasksByTitle";
 import { createGoalTool } from "./createGoal";
 import { getGoalsTool } from "./getGoals";
+import { getDailyPlanTool } from "./getDailyPlan";
 
 export const tools: Tool[] = [
   createTaskTool,
@@ -17,7 +18,8 @@ export const tools: Tool[] = [
   deleteTaskTool,
   findTaskByTitleTool,
   createGoalTool,
-  getGoalsTool
+  getGoalsTool,
+  getDailyPlanTool
 ];
 
 // Lookup map for quick access by name (used when executing a tool call)
