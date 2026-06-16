@@ -897,3 +897,358 @@ Tools
 Memory
 
 Phase 5 introduced the Tools piece
+Phase 6 Learning Log — ReAct Agent Loop
+Goal
+
+Upgrade the agent from a single-step tool caller into a ReAct (Reason + Act) agent capable of performing multiple reasoning steps within a single user request.
+
+Before:
+
+User
+ ↓
+LLM
+ ↓
+Tool
+ ↓
+Final Answer
+
+After:
+
+User
+ ↓
+LLM
+ ↓
+Tool
+ ↓
+Observation
+ ↓
+LLM
+ ↓
+Tool
+ ↓
+Observation
+ ↓
+LLM
+ ↓
+Final Answer
+
+The agent can now think, act, observe results, and continue reasoning until the task is completed.
+
+Task 6.1 — Restructure agent.ts into a Loop
+Completed
+Replaced the single tool-calling flow with an iterative ReAct loop.
+Added conversation state that persists across reasoning steps.
+Allowed the model to observe tool results and continue reasoning.
+Learned
+
+A true AI agent rarely completes a task in one step.
+
+Many requests require:
+
+Find information
+↓
+Use information
+↓
+Perform action
+↓
+Report result
+
+Example:
+
+User:
+
+Delete the "Read Book" task
+
+Agent reasoning:
+
+Need task ID
+↓
+Call getTasks
+↓
+Find matching task
+↓
+Call deleteTask
+↓
+Respond
+
+Without a loop, this workflow is impossible.
+
+Task 6.2 — Handle Multiple Tool Calls
+Completed
+Added support for executing all tool calls returned by the model.
+Stored every tool call in an execution log.
+Returned all tool activity to the UI.
+Learned
+
+Models may request:
+
+Tool A
+Tool B
+Tool C
+
+inside a single reasoning cycle.
+
+The agent must execute every requested tool before continuing.
+
+Example:
+
+Show my tasks and mark the first one complete
+
+Possible flow:
+
+getTasks()
+↓
+completeTask()
+↓
+Final Answer
+
+The agent is now capable of chaining actions.
+
+Task 6.3 — Add Max Iteration Limit
+Completed
+Added MAX_ITERATIONS.
+Added fallback response when the loop exceeds the limit.
+Prevented infinite reasoning loops.
+Learned
+
+Agents can sometimes become stuck:
+
+Tool
+↓
+Reason
+↓
+Tool
+↓
+Reason
+↓
+Tool
+↓
+...
+
+Without limits:
+
+Infinite API calls
+Infinite cost
+Infinite execution
+
+Adding a safety limit ensures:
+
+Predictable behavior
+Controlled resource usage
+Better debugging
+
+Example:
+
+const MAX_ITERATIONS = 5;
+
+After 5 iterations:
+
+Stop reasoning
+Return best available answer
+Task 6.4 — Update Chat UI
+Completed
+Added support for displaying all tool calls.
+Added tool call timeline.
+Displayed each reasoning step.
+
+Example:
+
+🔧 Step 1: getTasks
+🔧 Step 2: deleteTask
+Learned
+
+Agent transparency is important.
+
+Without visibility:
+
+User sees answer
+
+With visibility:
+
+User sees reasoning actions
+
+Benefits:
+
+Easier debugging
+Easier learning
+Greater user trust
+Task 6.5 — End-to-End Testing
+Tested
+Multi-Step Delete
+
+Input:
+
+Delete the "Read Book" task
+
+Expected:
+
+getTasks
+↓
+deleteTask
+↓
+Success message
+Missing Task
+
+Input:
+
+Delete the "Read Book" task
+
+when task doesn't exist
+
+Expected:
+
+getTasks
+↓
+No match found
+↓
+Task not found response
+Complete by Title
+
+Input:
+
+Mark the "Buy Milk" task complete
+
+Expected:
+
+getTasks
+↓
+completeTask
+↓
+Success response
+Query Then Act
+
+Input:
+
+Show my tasks and tell me which are pending
+
+Expected:
+
+getTasks
+↓
+Summarize pending tasks
+Verified
+
+✅ Multiple reasoning steps
+
+✅ Multiple tool calls
+
+✅ Tool observations
+
+✅ Iteration limits
+
+✅ UI tool-call timeline
+
+✅ Final natural-language responses
+
+Key Concepts Learned
+ReAct Pattern
+
+ReAct stands for:
+
+Reason
++
+Act
+
+Workflow:
+
+Thought
+↓
+Tool Call
+↓
+Observation
+↓
+Thought
+↓
+Tool Call
+↓
+Observation
+↓
+Final Answer
+
+This is the foundation of modern AI agents.
+
+Tool Observations
+
+A tool result becomes an observation for future reasoning.
+
+Example:
+
+getTasks()
+
+returns:
+
+[
+  {
+    "id": 12,
+    "title": "Buy Milk"
+  }
+]
+
+The model can now reason:
+
+I found the task ID.
+Now I can delete it.
+Agent Memory (Within a Request)
+
+The loop creates temporary memory:
+
+User Request
+↓
+Tool Results
+↓
+Reasoning State
+↓
+Final Answer
+
+The model remembers observations from previous steps during the same request.
+
+Safety Limits
+
+Every agent needs guardrails:
+
+Max Iterations
+Timeouts
+Validation
+Error Handling
+
+Otherwise the agent can become unstable.
+
+Architecture After Phase 6
+User
+ ↓
+Chat UI
+ ↓
+API Route
+ ↓
+ReAct Agent Loop
+ ↓
+Tool Executor
+ ↓
+Tools
+ ↓
+Service Layer
+ ↓
+Database
+Biggest Takeaway
+
+A tool-calling model becomes an actual agent only when it can:
+
+Reason
+↓
+Act
+↓
+Observe
+↓
+Reason Again
+
+Phase 5 introduced tool usage.
+
+Phase 6 introduced agentic reasoning.
+
+This is the phase where the application evolved from:
+
+LLM + Tool
+
+to:
+
+AI Agent
