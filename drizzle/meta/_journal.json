@@ -15,6 +15,13 @@
       "when": 1781592422319,
       "tag": "0001_uneven_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781619299430,
+      "tag": "0002_eager_thunderbird",
+      "breakpoints": true
     }
   ]
 }

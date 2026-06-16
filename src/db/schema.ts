@@ -33,6 +33,13 @@ export const milestones = pgTable("milestones", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const memories = pgTable("memories", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  category: varchar("category", {length: 50,}).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
 export type Goal = typeof goals.$inferSelect;
