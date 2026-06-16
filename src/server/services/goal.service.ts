@@ -14,6 +14,7 @@ export async function createGoal(input: {
     title: input.title,
     description: input.description ?? null,
     targetDate: input.targetDate ? new Date(input.targetDate) : null,
+    status:"active"
   };
 
   const [newGoal] = await db.insert(goals).values(values).returning();
@@ -42,6 +43,7 @@ export async function createMilestone(input: {
     title: input.title,
     description: input.description ?? null,
     orderIndex: input.orderIndex,
+    status:"pending"
   };
 
   const [newMilestone] = await db.insert(milestones).values(values).returning();

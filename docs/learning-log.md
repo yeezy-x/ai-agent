@@ -1294,3 +1294,28 @@ Task
 Key Takeaway
 
 The database now correctly models a roadmap hierarchy and protects data integrity automatically.
+
+##Learning Log — Task 7.4
+Completed
+Created goal.service.ts
+Added goal CRUD helpers
+Added milestone helpers
+Added detailed roadmap retrieval
+Learned
+Services encapsulate business logic.
+Multiple entities can be composed into higher-level views.
+Promise.all() improves performance for independent read operations.
+Tools and APIs should reuse services instead of duplicating logic.
+Architecture
+Agent Tool
+     ↓
+goal.service.ts
+     ↓
+Goals
+Milestones
+Tasks
+     ↓
+Database
+Key Takeaway
+
+The service layer is becoming the central business layer for the entire application, not just tasks.
