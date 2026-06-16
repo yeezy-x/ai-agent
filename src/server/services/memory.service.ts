@@ -10,6 +10,14 @@ interface CreateMemoryInput {
 export async function createMemory(
   input: CreateMemoryInput
 ) {
+    const existing = await db
+  .select()
+  .from(memories)
+  .where(eq(memories.content, input.content));
+
+if (existing.length > 0) {
+  return existing[0];
+}
   const [memory] = await db
     .insert(memories)
     .values({
@@ -22,9 +30,7 @@ export async function createMemory(
 }
 
 export async function getMemories() {
-  return await db
-    .select()
-    .from(memories);
+  return await db.select().from(memories);
 }
 
 export async function getMemoriesByCategory(

@@ -24,14 +24,22 @@ export const getMemoriesTool: Tool<GetMemoriesArgs> = {
   },
 
   execute: async (args) => {
-    const memories = args.category
-      ? await getMemoriesByCategory(args.category)
-      : await getMemories();
-
+  if (
+    !args.category ||
+    args.category === "general"
+  ) {
     return {
       success: true,
-      memories,
+      memories: await getMemories(),
     };
-  },
+  }
+
+  return {
+    success: true,
+    memories: await getMemoriesByCategory(
+      args.category
+    ),
+  };
+}
 };
 
