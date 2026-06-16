@@ -13,12 +13,14 @@ export async function createTask(input: {
   description?: string | null;
   priority?: string;
   dueDate?: string | Date | null;
+  milestoneId?:number | null
 }) {
   const values: NewTask = {
     title: input.title,
     description: input.description ?? null,
     priority: input.priority ?? "medium",
     dueDate: input.dueDate ? new Date(input.dueDate) : null,
+    milestoneId:input.milestoneId ?? null,
   };
 
   const [newTask] = await db.insert(tasks).values(values).returning();

@@ -44,7 +44,7 @@ const roadmapSchema = {
 export async function generateRoadmap(
     goalTitle:string,
     description?:string,
-    targetDate?:string|null
+    targetDate?:string | Date | null
 ):Promise<Roadmap>{
     const response=await ollama.chat({
         model:MODEL,
