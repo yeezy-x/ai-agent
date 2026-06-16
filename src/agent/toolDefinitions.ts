@@ -11,15 +11,14 @@
 
 // src/agent/toolDefinitions.ts
 
-import type { Tool as OllamaTool } from "ollama";
 import { tools } from "./tools";
+import type { Tool as OllamaTool } from "ollama";
 
-export const toolDefinitions =
-  tools.map((tool) => ({
-    type: "function",
-    function: {
-      name: tool.name,
-      description: tool.description,
-      parameters: tool.parameters,
-    },
-  })) as OllamaTool[];
+export const toolDefinitions: OllamaTool[] = tools.map((tool) => ({
+  type: "function",
+  function: {
+    name: tool.name,
+    description: tool.description,
+    parameters: tool.parameters ,
+  },
+}));

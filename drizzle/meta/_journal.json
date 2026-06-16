@@ -8,6 +8,13 @@
       "when": 1781335503069,
       "tag": "0000_panoramic_ultimatum",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781592422319,
+      "tag": "0001_uneven_vampiro",
+      "breakpoints": true
     }
   ]
 }

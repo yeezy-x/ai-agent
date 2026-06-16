@@ -1,3 +1,5 @@
-import ollama from "ollama"
+import { Ollama } from "ollama";
 
-export const ollamaClient=ollama
+export const ollama = new Ollama({ host: "http://localhost:11434" });
+
+export const MODEL = "qwen3:8b";

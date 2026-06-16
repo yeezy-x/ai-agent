@@ -1,171 +1,127 @@
-// import { ai } from "@/lib/geminiai";
-// import { toolDefinitions } from "./toolDefinitions";
-// import { Content, Part } from "@google/genai";
-// import { executeTool } from "./executeTool";
-
-// const SYSTEM_PROMPT=`You are a helpful personal task management assistant.
-// You can view, create, update, complete, and delete the user's tasks using the tools provided.
-// Always use a tool when the user asks you to do something with their tasks.
-// After a tool runs, summarize the result for the user in plain, friendly language.
-// Before deleting, completing, or updating a task referenced by title,
-// first find the task.
-// If no exact task exists, do not perform the action.
-// Instead tell the user the task was not found.
-// If no tool is needed (e.g. the user just says hello or asks a general question), respond directly.`
-
-// const MAX_ITERATIONS=5
-// const MODEL_NAME="gemini-2.5-flash-native-audio-preview-12-2025"
-// export interface ToolCallLogEntry{
-//     name:string,
-//     args:unknown,
-//     result:unknown
-// }
-
-// export async function runAgent(userMessage:string){
-//     const contents:Content[]=[{role:"user",parts:[{text:userMessage}]}]
-//     const toolCallLog:ToolCallLogEntry[]=[];
-//     for(let i=0;i<MAX_ITERATIONS;i++){
-//         const response=await ai.models.generateContent({
-//             model:MODEL_NAME,
-//             contents,
-//             config:{
-//                 systemInstruction:SYSTEM_PROMPT,
-//                 tools:[{functionDeclarations:toolDefinitions}]
-//             }
-//         })
-//         const functionCalls=response.functionCalls;
-//         if(!functionCalls || functionCalls.length===0){
-//             return { reply: response.text ?? "", toolCall: null };
-//         }
-//         const modelParts:Part[]=[]
-//         const responseParts:Part[]=[]
-//         for(const call of functionCalls){
-//             const result=await executeTool(call.name!, call.args ?? {})
-//             toolCallLog.push({name:call.name!, args:call.args as Record<string,unknown>, result})
-//             modelParts.push({functionCall:call})
-//             responseParts.push({
-//                 functionResponse:{name:call.name!, response:result as Record<string,unknown>}
-//             })
-//         }
-//         contents.push({role:"model",parts:modelParts})
-//         contents.push({ role: "user", parts: responseParts })
-//     }
-//     console.warn(`Agent hit MAX_ITERATIONS (${MAX_ITERATIONS}) for message: "${userMessage}"`);
-//     contents.push({
-//         role: "user",
-//         parts: [
-//             {
-//                 text: "You've reached the maximum number of steps. Do not call any more tools. Summarize what you've done so far and respond to the user now.",
-//             },
-//         ],
-//     });
-//     const finalResponse=await ai.models.generateContent({
-//         model: MODEL_NAME,
-//         contents,
-//         config: { systemInstruction: SYSTEM_PROMPT }, // no tools passed
-//     });
-//     return {
-//         reply: finalResponse.text ?? "I wasn't able to finish that within the allowed steps.",
-//         toolCalls: toolCallLog,
-//     }
-// }
 // src/agent/agent.ts
-
-import ollama from "ollama";
-import { executeTool } from "./executeTool";
+import type { Message } from "ollama";
+import { ollama, MODEL } from "@/lib/ollama";
 import { toolDefinitions } from "./toolDefinitions";
-
-const MODEL_NAME = "qwen2.5-coder:7b";
-
-const SYSTEM_PROMPT = `You are a helpful personal task management assistant.
-You can view, create, update, complete, and delete the user's tasks using the tools provided.
-Always use a tool when the user asks you to do something with their tasks.
-After a tool runs, summarize the result for the user in plain, friendly language.
-Before deleting, completing, or updating a task referenced by title,
-first find the task.
-If no exact task exists, do not perform the action.
-Instead tell the user the task was not found.
-If no tool is needed (e.g. the user just says hello or asks a general question),
-respond directly.
-And also dont take way too much time in giving the answer.`;
+import { executeTool } from "./executeTool";
+import { parseFallbackToolCall } from "./parseFallbackToolCall";
 
 const MAX_ITERATIONS = 5;
+const SYSTEM_INSTRUCTION = `You are a task management assistant with access to tools. You MUST use tools to take any action — you cannot directly create, view, update, complete, or delete tasks yourself, only the tools can do that.
 
+RULES:
+1. If the user wants to add/create a task → call createTask. Do NOT just say you added it, actually call the tool.
+2. If the user asks what tasks they have, or mentions a task by name/title without an id → call getTasks first.
+3. If the user wants to mark something done/finished/complete → call completeTask (you need the id — call getTasks first if you don't have it).
+4. If the user wants to change a task's details → call updateTask.
+5. If the user wants to remove/delete a task → call deleteTask (you need the id — call getTasks first if you don't have it).
+6. You may need to call multiple tools, one after another, to fully complete a request (e.g. look up an id with getTasks, then act on it).
+7. Only respond with plain text and no tool call once you have completed everything needed, or if the user is NOT asking you to do anything with tasks (e.g. greetings).
+
+CRITICAL — matching tasks by name:
+When the user refers to a task by title (not by id), you must only act on it if you find a CLEAR, CONFIDENT match in the getTasks results — meaning the title is the same or a very close paraphrase of what the user said.
+- If NO task title reasonably matches what the user described, do NOT guess, do NOT pick the closest-sounding one, and do NOT call completeTask/updateTask/deleteTask at all for that item.
+- Instead, stop and tell the user in plain text that you couldn't find a task matching that description, and list the actual task titles that do exist so they can clarify.
+- It is always better to say "I couldn't find that task" than to act on the wrong one. Acting on the wrong task is a serious mistake.
+
+Examples:
+User: "Add buy milk"
+You: [call createTask with title "Buy milk"]
+
+User: "What do I have to do?"
+You: [call getTasks]
+
+User: "I finished the groceries task"
+You: [call getTasks to find the id, then call completeTask with that id, ONLY if a task with a groceries-related title actually exists]
+
+User: "Delete Task B" (and getTasks shows no task titled "Task B" or similar)
+You: [call getTasks, see no match, then respond in plain text: "I couldn't find a task called 'Task B'. Your current tasks are: ..."]
+
+Never describe an action in words without actually calling the corresponding tool when a real match exists. After your tools have run, summarize what you did in plain, friendly language — do not show raw JSON.`;
 export interface ToolCallLogEntry {
   name: string;
   args: unknown;
   result: unknown;
 }
 
-type Message = {
-  role: "system" | "user" | "assistant" | "tool";
-  content: string;
-};
+interface ExtractedCall {
+  name: string;
+  args: Record<string, unknown>;
+}
+
+function extractToolCalls(message: Message): ExtractedCall[] {
+  if (message.tool_calls && message.tool_calls.length > 0) {
+    return message.tool_calls.map((tc) => ({
+      name: tc.function.name,
+      args: tc.function.arguments as Record<string, unknown>,
+    }));
+  }
+
+  const fallback = parseFallbackToolCall(message.content);
+  if (fallback) {
+    console.warn(`Used fallback parser for tool call: ${fallback.name}`);
+    return [{ name: fallback.name, args: fallback.arguments }];
+  }
+
+  return [];
+}
 
 export async function runAgent(userMessage: string) {
-  const toolCalls: ToolCallLogEntry[] = [];
-
   const messages: Message[] = [
-    {
-      role: "system",
-      content: SYSTEM_PROMPT,
-    },
-    {
-      role: "user",
-      content: userMessage,
-    },
+    { role: "system", content: SYSTEM_INSTRUCTION },
+    { role: "user", content: userMessage },
   ];
+  const toolCallLog: ToolCallLogEntry[] = [];
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const response = await ollama.chat({
-      model: MODEL_NAME,
+      model: MODEL,
       messages,
       tools: toolDefinitions,
+      think: false,
     });
 
-    const calls = response.message.tool_calls;
-    // Model produced final answer
-    if (!calls || calls.length === 0) {
-      return {
-        reply: response.message.content,
-        toolCalls,
-      };
+    const calls = extractToolCalls(response.message);
+
+    // No tool calls this turn -> model is done, return its text
+    if (calls.length === 0) {
+      return { reply: response.message.content ?? "", toolCalls: toolCallLog };
     }
 
-    // Save assistant message
-    messages.push({
-      role: "assistant",
-      content: response.message.content ?? "",
-    });
+    // The assistant's turn (including all tool calls it made) goes into history once
+    messages.push(response.message);
 
-    // Execute tool calls
+    // Execute each tool call in order, push one "tool" result message per call
     for (const call of calls) {
-      const result = await executeTool(
-        call.function.name,
-        (call.function.arguments ??
-          {}) as Record<string, unknown>
-      );
-
-      toolCalls.push({
-        name: call.function.name,
-        args: call.function.arguments,
-        result,
-      });
+      const result = await executeTool(call.name, call.args);
+      toolCallLog.push({ name: call.name, args: call.args, result });
 
       messages.push({
         role: "tool",
+        tool_name: call.name,
         content: JSON.stringify(result),
-      });
+      } as Message);
     }
   }
 
-  console.warn(
-    `Agent hit MAX_ITERATIONS (${MAX_ITERATIONS})`
-  );
+  // Hit the iteration limit. Force a final, tool-free response.
+  console.warn(`Agent hit MAX_ITERATIONS (${MAX_ITERATIONS}) for message: "${userMessage}"`);
+
+  messages.push({
+    role: "user",
+    content:
+      "You've reached the maximum number of steps. Do not call any more tools. Summarize what you've done so far and respond to the user now.",
+  });
+
+  const finalResponse = await ollama.chat({
+    model: MODEL,
+    messages,
+    think: false,
+  });
 
   return {
     reply:
-      "I wasn't able to finish that within the allowed steps.",
-    toolCalls,
+      finalResponse.message.content ??
+      "I made some progress but couldn't fully complete that request.",
+    toolCalls: toolCallLog,
   };
 }

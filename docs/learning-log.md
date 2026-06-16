@@ -1252,3 +1252,45 @@ LLM + Tool
 to:
 
 AI Agent
+-----
+
+Learning Log — Task 7.2
+Completed
+Generated migration
+Applied migration
+Verified new tables
+Verified task linkage column
+Learned
+Drizzle converts TypeScript schemas into SQL migrations.
+Migrations allow schema evolution without rebuilding the database.
+Foreign keys establish relationships between entities.
+Architecture
+Goal
+ ↓
+Milestone
+ ↓
+Task
+Key Takeaway
+
+The database is now capable of storing long-term goals and their roadmaps, not just standalone tasks.
+
+Learning Log — Task 7.3
+Completed
+Verified Goal → Milestone foreign key
+Verified Milestone → Task foreign key
+Tested cascade deletion
+Tested set-null deletion
+Learned
+Foreign keys enforce relationships.
+cascade removes dependent records automatically.
+set null preserves dependent records while removing the relationship.
+Database constraints prevent orphaned data.
+Architecture
+Goal
+ ↓ cascade
+Milestone
+ ↓ set null
+Task
+Key Takeaway
+
+The database now correctly models a roadmap hierarchy and protects data integrity automatically.
